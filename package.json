@@ -1,0 +1,20 @@
+{
+  "name": "learning",
+  "version": "1.0.0",
+  "description": "There will be practacing on node ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "type": "module"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/niamul007/back-end.git"
+  },
+  "author": "Niamul Hoque",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/niamul007/back-end/issues"
+  },
+  "homepage": "https://github.com/niamul007/back-end#readme"
+}
