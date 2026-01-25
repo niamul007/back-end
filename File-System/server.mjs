@@ -6,7 +6,7 @@ const HOSTNAME = 'localhost';
 const __dirname = import.meta.dirname;
 
 const server = http.createServer(async (req, res) => {
-  await serveStaticFile(__dirname, res);
+  await serveStaticFile(__dirname, res,req);
 });
 
 server.listen(PORT, HOSTNAME, () => {
