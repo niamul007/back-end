@@ -1,35 +1,52 @@
-import http from 'node:http';
-import path from 'node:path';
-import fs from 'node:fs/promises';
-import { contentType } from '../Utilities/contentType.js';
+import http from "node:http";
+import path from "node:path";
+import fs from "node:fs/promises";
+import { contentType } from "../Utilities/contentType.js";
+import { getData } from "../Utilities/getData.mjs";
 
 const PORT = 3000;
-const HOSTNAME = 'localhost';
+const HOSTNAME = "localhost";
 const __dirname = import.meta.dirname;
 
 const server = http.createServer(async (req, res) => {
-  const pubDir = path.join(__dirname,'..', "html");
-  const filePath = path.join(
-    pubDir,
-    req.url === "/" ? "story.html" : req.url,
-  );
+  const pubDir = path.join(__dirname, "..", "html");
 
   try {
+    // 1. Check for API Routes FIRST
+    if (req.url === "/stories" && req.method === "GET") {
+      const stories = await getData();
+      res.statusCode = 200;
+      res.setHeader("Content-Type", "application/json");
+      return res.end(JSON.stringify(stories));
+    }
+
+    // 2. Handle POST requests (The ADD story part)
+    if (req.url === "/add-story" && req.method === "POST") {
+        // We will add the POST data parsing logic here next
+        res.end("This will eventually save your story!");
+        return;
+    }
+
+    // 3. If it's not an API route, treat it as a Static File request
+    const filePath = path.join(pubDir, req.url === "/" ? "story.html" : req.url);
     const extension = path.extname(filePath);
     const mimeType = contentType(extension);
-    const fileContent = await fs.readFile(filePath); 
     
-    // FIX 2: Removed "utf-8" so it can handle images/CSS/JS without corruption
+    const fileContent = await fs.readFile(filePath);
+
     res.statusCode = 200;
-    
-    // Note: This still assumes everything is HTML; 
-    // real projects need dynamic Content-Types for CSS/JS to work.
-    res.setHeader('Content-Type', mimeType); 
+    res.setHeader("Content-Type", mimeType);
     res.end(fileContent);
+
   } catch (error) {
-    console.error(`Error: ${error.message}`);
-    res.statusCode = 404;
-    res.end("File Not Found");
+    if (error.code === 'ENOENT') {
+        res.statusCode = 404;
+        res.end("File Not Found");
+    } else {
+        console.error(`Server Error: ${error.message}`);
+        res.statusCode = 500;
+        res.end("Internal Server Error");
+    }
   }
 });
 
