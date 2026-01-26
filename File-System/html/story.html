@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Story Cards</title>
+  <link rel="stylesheet" href="story.css">
+</head>
+<body>
+  <header>
+    <h1>Story Cards</h1>
+  </header>
+
+  <div class="container">
+    <a href="add.html" class="add-story-link">Add New Story</a>
+
+    <div class="cards" id="cards">
+      <!-- Story cards will appear here dynamically -->
+    </div>
+  </div>
+
+  <script>
+    // Fetch stories from server when ready
+    fetch("/stories")
+      .then(res => res.json())
+      .then(data => {
+        const container = document.getElementById("cards");
+        data.forEach(story => {
+          const div = document.createElement("div");
+          div.classList.add("card");
+          div.innerHTML = `<h3>${story.title}</h3><p>${story.content}</p>`;
+          container.appendChild(div);
+        });
+      })
+      .catch(() => {
+        const container = document.getElementById("cards");
+        container.innerHTML = "<p>No stories yet. Add one!</p>";
+      });
+  </script>
+</body>
+</html>
