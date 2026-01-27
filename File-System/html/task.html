@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="style.css">
+    <title>Task Tracker</title>
+</head>
+<link rel="stylesheet" href="task.css">
+<body>
+    <h1>Task Tracker</h1>
+    
+    <form action="/add-task" method="POST">
+        <input type="text" name="taskName" placeholder="Enter task..." required>
+        <select name="category">
+            <option value="Work">Work</option>
+            <option value="Personal">Personal</option>
+            <option value="Urgent">Urgent</option>
+        </select>
+        <button type="submit">Add Task</button>
+    </form>
+
+    <div id="task-list">
+        </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
