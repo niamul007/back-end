@@ -3,6 +3,7 @@ import path from "node:path";
 import fs from "node:fs/promises";
 import { contentType } from "../Utilities/contentType.js";
 import { getData } from "../Utilities/getData.mjs";
+import { handleAddStory } from "../Utilities/storyController.js";
 
 const PORT = 3000;
 const HOSTNAME = "localhost";
@@ -21,10 +22,8 @@ const server = http.createServer(async (req, res) => {
     }
 
     // 2. Handle POST requests (The ADD story part)
-    if (req.url === "/add-story" && req.method === "POST") {
-        // We will add the POST data parsing logic here next
-        res.end("This will eventually save your story!");
-        return;
+if (req.url === "/add-story" && req.method === "POST") {
+      return handleAddStory(req, res); 
     }
 
     // 3. If it's not an API route, treat it as a Static File request
