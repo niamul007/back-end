@@ -1,0 +1,12 @@
+body { font-family: sans-serif; padding: 20px; background: #f4f4f4; }
+form { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+input, select, button { padding: 10px; margin-right: 10px; }
+.task-card { 
+    background: white; 
+    padding: 15px; 
+    border-left: 5px solid #2ecc71; 
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+.Urgent { border-left-color: #e74c3c; }
