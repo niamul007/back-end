@@ -1,32 +1,34 @@
-import getData from "./getData.mjs";
-// We will eventually import a saveData function here too
+import { getData } from "./getData.mjs";
+import { saveData } from "./saveData.mjs"; // 1. Import the writer
 
 export async function handleAddStory(req, res) {
   let body = "";
 
-  // Collect the data chunks
   req.on("data", (chunk) => {
     body += chunk.toString();
   });
 
-  // Once all data is here
   req.on("end", async () => {
-    // 1. Parse the URL-encoded data from the form
     const params = new URLSearchParams(body);
     const newStory = {
       title: params.get("title"),
       content: params.get("content"),
-      id: Date.now() // Give it a unique ID
+      id: Date.now(),
     };
 
-    console.log("Controller received new story:", newStory);
+    // 2. GET existing stories
+    const currentStories = await getData();
 
-    // 2. Respond to the browser
-    res.writeHead(201, { "Content-Type": "text/html" });
-    res.end(`
-      <h1>Success!</h1>
-      <p>Story "${newStory.title}" was received.</p>
-      <a href="/">Go back to Home</a>
-    `);
+    // 3. ADD the new story to the list
+    currentStories.push(newStory);
+
+    // 4. SAVE the updated list back to data.json
+    await saveData(currentStories);
+
+    console.log("Story saved successfully!");
+
+    // 5. REDIRECT back home to see the new card
+    res.writeHead(302, { Location: "/" });
+    res.end();
   });
 }
