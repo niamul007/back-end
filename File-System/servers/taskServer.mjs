@@ -2,7 +2,8 @@ import http from "node:http";
 import path from "node:path";
 import fs from "node:fs/promises";
 import { contentType } from "../Utilities/contentType.js";
-
+import { readTask } from "../Utilities/fileHandler.js";
+import { handleTask } from "../controllers/taskController.js";
 
 const PORT = 4000;
 const HOSTNAME = "localhost";
@@ -11,6 +12,18 @@ const __dirname = import.meta.dirname;
 
 const server = http.createServer(async(req, res) => {
   try {
+    if(req.url === "/tasks" && req.method === 'GET'){
+        const tasks = await readTask();
+        res.statusCode = 200; 
+        res.setHeader('Content-Type','application/json')
+        return res.end(JSON.stringify(tasks))
+    }
+
+    if(req.url === '/add-task'&& req.method === "POST"){
+        return handleTask(req,res)
+    }
+
+
     const pubDir = path.join(__dirname, "..", "html");
     const filePath = path.join(pubDir, req.url === "/" ? "task.html" : req.url);
     const extension = path.extname(filePath);
