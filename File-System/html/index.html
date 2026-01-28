@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Digital Guestbook</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #eef2f3; display: flex; flex-direction: column; align-items: center; padding: 50px; }
+        .container { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 400px; }
+        h2 { color: #333; text-align: center; }
+        form { display: flex; flex-direction: column; gap: 10px; }
+        input, textarea { padding: 12px; border: 1px solid #ddd; border-radius: 8px; outline: none; }
+        button { padding: 12px; background: #007bff; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        button:hover { background: #0056b3; }
+        #feed { margin-top: 30px; width: 400px; }
+        .post { background: white; padding: 15px; border-radius: 10px; margin-bottom: 15px; border-left: 5px solid #007bff; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .post b { display: block; color: #007bff; margin-bottom: 5px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Leave a Message</h2>
+    <form action="/add-note" method="POST">
+        <input type="text" name="username" placeholder="Your Name" required>
+        <textarea name="message" placeholder="What's on your mind?" rows="3" required></textarea>
+        <button type="submit">Post Message</button>
+    </form>
+</div>
+
+<div id="feed">
+    </div>
+
+<script>
+    const feed = document.getElementById('feed');
+
+    async function loadMessages() {
+        // TODO: 1. Fetch from "/notes"
+        // TODO: 2. Parse JSON
+        // TODO: 3. Loop and create .post divs
+        // TIP: Remember to use 'await'
+    }
+
+    loadMessages();
+</script>
+
+</body>
+</html>
