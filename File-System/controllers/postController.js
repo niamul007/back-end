@@ -26,7 +26,7 @@ export async function controlPost(req, res) {
     console.log("Post saved successfully");
 
     // FIX 3: Correct method name and destination
-    res.writeHead(302, { Location: "/" });
+    res.writeHead(302,{Location:"/"});
     res.end();
   });
 }
