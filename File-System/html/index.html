@@ -34,12 +34,36 @@
     const feed = document.getElementById('feed');
 
     async function loadMessages() {
-        // TODO: 1. Fetch from "/notes"
-        // TODO: 2. Parse JSON
-        // TODO: 3. Loop and create .post divs
-        // TIP: Remember to use 'await'
+        try {
+            // 1. Fetch from the server
+            const res = await fetch('/notes');
+            
+            // 2. Parse JSON (Great job remembering 'await'!)
+            const data = await res.json();
+
+            // Clear the feed before loading
+            feed.innerHTML = "";
+
+            // 3. Loop and create .post divs
+            data.forEach((note) => {
+                const postDiv = document.createElement("div");
+                postDiv.className = "post"; // This matches the CSS I gave you
+
+                postDiv.innerHTML = `
+                    <b>@${note.username}</b>
+                    <p>${note.message}</p>
+                    <small style="color: #999;">${new Date(note.id).toLocaleString()}</small>
+                `;
+
+                feed.appendChild(postDiv);
+            });
+        } catch (error) {
+            console.error('Failed to load notes:', error);
+            feed.innerHTML = "<p style='color:red;'>Could not load messages. Is the server running?</p>";
+        }
     }
 
+    // Load immediately on page open
     loadMessages();
 </script>
 
