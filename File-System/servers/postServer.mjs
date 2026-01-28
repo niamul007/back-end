@@ -1,13 +1,27 @@
 import http from 'node:http'
-
+import fs from  'node:fs/promises'
+import { contentType } from '../Utilities/contentType.js';
+import path from 'node:path';
 
 const PORT = 3000;
 const HOSTNAME = 'localhost';
+const __dirname = import.meta.dirname;
 
-const server = http.createServer((req,res)=>{
+const server = http.createServer(async(req,res)=>{
+    try{
+    const pubDir = path.join(__dirname,'..','html')
+    const filePath = path.join(pubDir, req.url === '/'? 'index.html': req.url)
+    const content = await fs.readFile(filePath,'utf-8')
+    const ext = path.extname(filePath)
+    const mimeType = contentType(ext);
     res.statusCode = 200;
-    res.setHeader('Content-Type','application/json')
-    res.end("Hello, guys things will get messy")
+    res.setHeader('Content-Type',mimeType)
+    res.end(content)
+    }
+    catch(error){
+        console.log('Error occurred' ,error.message)
+    }
+
 })
 
 
