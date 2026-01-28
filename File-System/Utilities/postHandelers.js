@@ -5,8 +5,14 @@ export async function readPost() {
   const __dirname = import.meta.dirname;
   try {
     const filePath = path.join(__dirname, "..", "data", "data.json");
-    const postContent = await fs.readFile(filePath);
+    const postContent = await fs.readFile(filePath, "utf-8"); // Using utf-8 here is safer for parsing strings
+
+    // If file exists but is empty, return empty array
+    if (!postContent || postContent.trim() === "") {
+      return [];
+    }
     return JSON.parse(postContent);
+    
   } catch (error) {
     if (error.code === "ENOENT") return [];
     console.error("Error reading data:", error.message);
