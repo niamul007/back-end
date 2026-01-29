@@ -16,5 +16,9 @@
   "bugs": {
     "url": "https://github.com/niamul007/back-end/issues"
   },
-  "homepage": "https://github.com/niamul007/back-end#readme"
+  "homepage": "https://github.com/niamul007/back-end#readme",
+  "keywords": [],
+  "dependencies": {
+    "express": "^5.2.1"
+  }
 }
