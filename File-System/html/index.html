@@ -83,7 +83,8 @@
 
     <div id="feed"></div>
 
-    <script>
+    <!-- <script>
+
       const feed = document.getElementById("feed");
 
       async function loadMessages() {
@@ -102,10 +103,17 @@
             const postDiv = document.createElement("div");
             postDiv.className = "post";
 
+            // Replace the innerHTML line inside your forEach loop with this:
+            // Inside your data.forEach loop, update the button line:
             postDiv.innerHTML = `
-        <b>@${note.username}</b>
-        <p>${note.message}</p> <small>${new Date(note.id).toLocaleString()}</small>
-    `;
+              <b>@${note.username}</b>
+              <p>${note.message}</p>
+              <button 
+                  style="background:red; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer;" 
+                  onclick="deleteNote(${note.id}, this)">
+                  Delete
+              </button>
+          `;
             feed.appendChild(postDiv);
           });
         } catch (error) {
@@ -115,8 +123,37 @@
         }
       }
 
+      async function deleteNote(id, buttonElement) {
+        // Check if we are in the "confirmation" state
+        if (buttonElement.innerText === "Delete") {
+          buttonElement.innerText = "Are you sure?";
+          buttonElement.style.backgroundColor = "orange";
+
+          // Reset the button if they don't click it again within 3 seconds
+          setTimeout(() => {
+            buttonElement.innerText = "Delete";
+            buttonElement.style.backgroundColor = "red";
+          }, 3000);
+          return;
+        }
+
+        // Step 2: Perform actual deletion
+        buttonElement.innerText = "Deleting...";
+        buttonElement.disabled = true; // Prevent double-clicking
+
+        try {
+          const res = await fetch(`/delete-note/${id}`, { method: "DELETE" });
+          if (res.ok) {
+            loadMessages(); // Refresh the feed
+          }
+        } catch (err) {
+          buttonElement.innerText = "Error!";
+          buttonElement.disabled = false;
+        }
+      }
       // Load immediately on page open
       loadMessages();
-    </script>
+    </script> -->
+  <script src="testScript.js"></script>
   </body>
 </html>
