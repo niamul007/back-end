@@ -31,6 +31,13 @@ app.post('/add-note', async (req, res) => {
     // 3. One-line redirect
     res.redirect('/'); 
 });
+// Add this to app.mjs
+app.delete('/delete-note/:id', async (req, res) => {
+    const notes = await readPost();
+    const filtered = notes.filter(n => n.id !== Number(req.params.id));
+    await writePost(filtered);
+    res.json({ success: true });
+});
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
