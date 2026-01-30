@@ -69,91 +69,18 @@
   <body>
     <div class="container">
       <h2>Leave a Message</h2>
-      <form action="/add-note" method="POST">
-        <input type="text" name="username" placeholder="Your Name" required />
+      <form id="noteForm">
+        <input type="text" id="username" placeholder="Your Name" required />
         <textarea
-          name="message"
+          id="message"
           placeholder="What's on your mind?"
-          rows="3"
           required
         ></textarea>
-        <button type="submit">Post Message</button>
+        <button type="submit" id="submitBtn">Post Message</button>
       </form>
     </div>
 
     <div id="feed"></div>
-
-    <!-- <script>
-
-      const feed = document.getElementById("feed");
-
-      async function loadMessages() {
-        try {
-          // 1. Fetch from the server
-          const res = await fetch("/notes");
-
-          // 2. Parse JSON (Great job remembering 'await'!)
-          const data = await res.json();
-
-          // Clear the feed before loading
-          feed.innerHTML = "";
-
-          // 3. Loop and create .post divs
-          data.forEach((note) => {
-            const postDiv = document.createElement("div");
-            postDiv.className = "post";
-
-            // Replace the innerHTML line inside your forEach loop with this:
-            // Inside your data.forEach loop, update the button line:
-            postDiv.innerHTML = `
-              <b>@${note.username}</b>
-              <p>${note.message}</p>
-              <button 
-                  style="background:red; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer;" 
-                  onclick="deleteNote(${note.id}, this)">
-                  Delete
-              </button>
-          `;
-            feed.appendChild(postDiv);
-          });
-        } catch (error) {
-          console.error("Failed to load notes:", error);
-          feed.innerHTML =
-            "<p style='color:red;'>Could not load messages. Is the server running?</p>";
-        }
-      }
-
-      async function deleteNote(id, buttonElement) {
-        // Check if we are in the "confirmation" state
-        if (buttonElement.innerText === "Delete") {
-          buttonElement.innerText = "Are you sure?";
-          buttonElement.style.backgroundColor = "orange";
-
-          // Reset the button if they don't click it again within 3 seconds
-          setTimeout(() => {
-            buttonElement.innerText = "Delete";
-            buttonElement.style.backgroundColor = "red";
-          }, 3000);
-          return;
-        }
-
-        // Step 2: Perform actual deletion
-        buttonElement.innerText = "Deleting...";
-        buttonElement.disabled = true; // Prevent double-clicking
-
-        try {
-          const res = await fetch(`/delete-note/${id}`, { method: "DELETE" });
-          if (res.ok) {
-            loadMessages(); // Refresh the feed
-          }
-        } catch (err) {
-          buttonElement.innerText = "Error!";
-          buttonElement.disabled = false;
-        }
-      }
-      // Load immediately on page open
-      loadMessages();
-    </script> -->
-  <script src="testScript.js"></script>
+    <script src="testScript.js"></script>
   </body>
 </html>
