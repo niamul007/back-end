@@ -12,7 +12,7 @@ const __dirname = import.meta.dirname;
 app.use(express.static(path.join(__dirname, '..', 'html')));
 // 2. Body Parser (For your Guestbook forms)
 app.use(express.urlencoded({ extended: true }));
-
+app.use(express.json());
 
 app.get('/notes', async (req, res) => {
     const notes = await readPost();
@@ -21,15 +21,23 @@ app.get('/notes', async (req, res) => {
 
 
 app.post('/add-note', async (req, res) => {
-    // 1. Data is already parsed!
-    const { username, message } = req.body; 
+    try {
+        const { username, message } = req.body;
+        
+        // Validation (Senior developers never trust the client!)
+        if (!username || !message) {
+            return res.status(400).json({ error: "Fields cannot be empty" });
+        }
 
-    // 2. Save it using your existing utility
-    const currentPosts = await readPost();
-    currentPosts.push({ username, message, id: Date.now() });
-    await writePost(currentPosts);
-    // 3. One-line redirect
-    res.redirect('/'); 
+        const currentPosts = await readPost();
+        currentPosts.push({ username, message, id: Date.now() });
+        await writePost(currentPosts);
+
+        // Send a "Created" status instead of a redirect
+        res.status(201).json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: "Server failed to save" });
+    }
 });
 // Add this to app.mjs
 app.delete('/delete-note/:id', async (req, res) => {
