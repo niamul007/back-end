@@ -46,20 +46,42 @@ async function loadNotes() {
       postDiv.className = "post";
 
       postDiv.innerHTML = `
-            <b>@${note.username}</b>
-            <p>@${note.message}</p>
-              <button 
-                  style="background:red; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer;" 
-                  onclick="delBtn(${note.id}, this)">
-                  Delete
-              </button>
-            `;
+    <b>@${note.username}</b>
+    <p id="msg-${note.id}">${note.message}</p>
+    <button onclick="editNote(${note.id}, this)">Edit</button>
+    <button style="background:red;" onclick="delBtn(${note.id}, this)">Delete</button>
+`;
       feed.appendChild(postDiv);
     });
   } catch (error) {
     console.error("Failed to load notes:", error);
     feed.innerHTML =
       "<p style='color:red;'>Could not load messages. Is the server running?</p>";
+  }
+}
+function editNote(id, editBtn) {
+  const pTag = document.getElementById(`msg-${id}`);
+  const originalText = pTag.innerText;
+
+  // Turn the paragraph into an input field
+  pTag.innerHTML = `<input type="text" id="input-${id}" value="${originalText}">`;
+
+  // Change "Edit" button to "Save"
+  editBtn.innerText = "Save";
+  editBtn.onclick = () => saveUpdate(id, editBtn);
+}
+
+async function saveUpdate(id, saveBtn) {
+  const newMessage = document.getElementById(`input-${id}`).value;
+
+  const res = await fetch(`/update-note/${id}`, {
+    method: "PUT", // PUT is the standard for Updating
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message: newMessage }),
+  });
+
+  if (res.ok) {
+    loadNotes(); // Refresh to show the new text
   }
 }
 
