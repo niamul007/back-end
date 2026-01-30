@@ -1,7 +1,7 @@
-import express from 'express';
-import path from 'node:path'; // Required for absolute paths
-import { readPost } from '../Utilities/postHandelers.js';
-import { writePost } from '../Utilities/postHandelers.js';
+import express from "express";
+import path from "node:path"; // Required for absolute paths
+import { readPost } from "../Utilities/postHandelers.js";
+import { writePost } from "../Utilities/postHandelers.js";
 
 const app = express();
 const PORT = 3000;
@@ -9,42 +9,59 @@ const __dirname = import.meta.dirname;
 
 // 1. Static Middleware (Handles CSS, JS, and the default index.html)
 // The ../ means "go out of the express folder, then find the html folder"
-app.use(express.static(path.join(__dirname, '..', 'html')));
+app.use(express.static(path.join(__dirname, "..", "html")));
 // 2. Body Parser (For your Guestbook forms)
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-app.get('/notes', async (req, res) => {
-    const notes = await readPost();
-    res.json(notes);
+app.get("/notes", async (req, res) => {
+  const notes = await readPost();
+  res.json(notes);
 });
 
+app.post("/add-note", async (req, res) => {
+  try {
+    const { username, message } = req.body;
 
-app.post('/add-note', async (req, res) => {
-    try {
-        const { username, message } = req.body;
-        
-        // Validation (Senior developers never trust the client!)
-        if (!username || !message) {
-            return res.status(400).json({ error: "Fields cannot be empty" });
-        }
-
-        const currentPosts = await readPost();
-        currentPosts.push({ username, message, id: Date.now() });
-        await writePost(currentPosts);
-
-        // Send a "Created" status instead of a redirect
-        res.status(201).json({ success: true });
-    } catch (err) {
-        res.status(500).json({ error: "Server failed to save" });
+    // Validation (Senior developers never trust the client!)
+    if (!username || !message) {
+      return res.status(400).json({ error: "Fields cannot be empty" });
     }
+
+    const currentPosts = await readPost();
+    currentPosts.push({ username, message, id: Date.now() });
+    await writePost(currentPosts);
+
+    // Send a "Created" status instead of a redirect
+    res.status(201).json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: "Server failed to save" });
+  }
 });
 // Add this to app.mjs
-app.delete('/delete-note/:id', async (req, res) => {
-    const notes = await readPost();
-    const filtered = notes.filter(n => n.id !== Number(req.params.id));
-    await writePost(filtered);
-    res.json({ success: true });
+app.delete("/delete-note/:id", async (req, res) => {
+  const notes = await readPost();
+  const filtered = notes.filter((n) => n.id !== Number(req.params.id));
+  await writePost(filtered);
+  res.json({ success: true });
+});
+
+app.put("/update-note/:id", async (req, res) => {
+  const idToUpdate = Number(req.params.id);
+  const { message } = req.body;
+
+  const notes = await readPost();
+
+  // Find the specific note and update its message
+  const updatedNotes = notes.map((note) => {
+    if (note.id === idToUpdate) {
+      return { ...note, message: message };
+    }
+    return note;
+  });
+
+  await writePost(updatedNotes);
+  res.json({ success: true });
 });
 
 app.listen(PORT, () => {
