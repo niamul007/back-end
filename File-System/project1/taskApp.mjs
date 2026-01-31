@@ -43,7 +43,7 @@ app.post("/add-task", async (req, res) => {
 
 // Route: Delete a task
 app.delete("/delete-task/:id", async (req, res) => {
-    try {
+    try {  
         const { id } = req.params;
         const tasks = await readPost();
         const filteredTasks = tasks.filter(t => t.id != id);
