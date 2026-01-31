@@ -56,11 +56,43 @@
         container.innerHTML = "";
 
         // Inside your forEach
+        // Inside your loadName forEach
         data.forEach((n) => {
           const div = document.createElement("div");
-          div.innerHTML = `<p>${n.name}</p>`;
-          container.appendChild(div); // FIX: You must add it to the page!
+          // FIX 1: Correct onclick syntax and pass ID + this
+          div.innerHTML = `
+            <p>${n.name}</p>
+            <button onclick="delData(${n.id}, this)" style="background-color:red; color:white;">Delete</button>
+        `;
+          container.appendChild(div);
         });
+
+        // ... inside your script ...
+      }
+      loadName(); // FIX 2: Call this at the end so data shows up on refresh!
+
+      async function delData(id, buttonElement) {
+        if (buttonElement.innerText === "Delete") {
+          buttonElement.innerText = "Are you sure?";
+          buttonElement.style.backgroundColor = "orange";
+          setTimeout(() => {
+            buttonElement.innerText = "Delete";
+            buttonElement.style.backgroundColor = "red";
+          }, 3000);
+          return;
+        }
+
+        buttonElement.innerText = "Deleting..";
+        buttonElement.disabled = true;
+        try {
+          const res = await fetch(`/delete-name/${id}`, { method: "DELETE" });
+          if (res.ok) {
+            loadName();
+          }
+        } catch (error) {
+          buttonElement.innerText = "Error!";
+          buttonElement.disabled = false;
+        }
       }
     </script>
   </body>
