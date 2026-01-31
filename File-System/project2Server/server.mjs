@@ -28,6 +28,25 @@ app.post("/add-task", async (req, res) => {
     res.status(500).json({ error: "save failed" });
   }
 });
+
+// ... (Your other routes)
+
+// FIX: Changed from app.post to app.delete
+app.delete("/delete-name/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const namesArray = await readPost();
+    
+    // Filter out the item
+    const filteredNames = namesArray.filter((n) => n.id != id);
+    
+    await writePost(filteredNames);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: "Delete failed" });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Hi alaka bashi this is your url: http://localhost:${PORT}`);
 });
