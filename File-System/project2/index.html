@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Simple data handeling</title>
+  </head>
+  <body>
+    <form id="form">
+      <input type="text" name="name" id="nameField" />
+      <button type="submit" id="btn">Add</button>
+    </form>
+    <div id="nameContainer"></div>
+    <script>
+      const form = document.getElementById("form");
+      const container = document.getElementById("nameContainer");
+
+      // 1. Grab HTML elements
+      // 2. Create a function to GET data and show it in the table
+      // 3. Create a listener for the form to POST new data
+      // 4. Create a function to DELETE data
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const name = document.getElementById("nameField").value;
+        console.log(name);
+        const btn = document.getElementById("btn");
+
+        btn.innerText = "Posting..";
+        btn.disableed = true;
+
+        try {
+          const res = await fetch("/add-task", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name }),
+          });
+
+          if (res.ok) {
+            form.reset();
+            loadName();
+          }
+        } catch (error) {
+          console.error("Post failed:", error);
+          alert("Could not save task.");
+        } finally {
+          btn.innerText = "Add Task";
+          btn.disabled = false;
+        }
+      });
+
+      async function loadName() {
+        const res = await fetch("/name");
+        const data = await res.json();
+
+        container.innerHTML = "";
+
+        // Inside your forEach
+        data.forEach((n) => {
+          const div = document.createElement("div");
+          div.innerHTML = `<p>${n.name}</p>`;
+          container.appendChild(div); // FIX: You must add it to the page!
+        });
+      }
+    </script>
+  </body>
+</html>
