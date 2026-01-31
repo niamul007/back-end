@@ -1,26 +1,58 @@
 import express from "express";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
-import { readPost } from "../Utilities/postHandelers.js";
+import { readPost, writePost } from "../Utilities/postHandelers.js";
 
 const app = express();
-const PORT = 7777; 
+const PORT = 7777;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// 1. FIX: Point to the FOLDER, not the file
 const staticFolder = join(__dirname, "..", "expressHtml");
-app.use(express.static(staticFolder));
 
 app.use(express.json());
+app.use(express.static(staticFolder));
 
-// 3. The Data Route for your loadTask() function
+// Serve the main HTML file
+app.get("/", (req, res) => {
+  res.sendFile(join(staticFolder, "taskApp.html"));
+});
+
+// Route: Get all tasks
 app.get("/tasks", async (req, res) => {
-    const tasks = await readPost();
-    res.json(tasks);
+  const tasks = await readPost();
+  res.json(tasks);
 });
 
-app.listen(PORT, () => {
-    console.log(`🚀 Task App Live: http://localhost:${PORT}`);
+// Route: Add a task
+app.post("/add-task", async (req, res) => {
+  try {
+    const { name, priority } = req.body; 
+    if (!name || !priority) return res.status(400).json({ error: "Missing data" });
+
+    const tasks = await readPost();
+    tasks.push({ id: Date.now(), name, priority });
+    
+    await writePost(tasks);
+    res.status(201).json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: "Save failed" });
+  }
 });
+
+// Route: Delete a task
+app.delete("/delete-task/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const tasks = await readPost();
+        const filteredTasks = tasks.filter(t => t.id != id);
+        
+        await writePost(filteredTasks);
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: "Delete failed" });
+    }
+});
+
+app.listen(PORT, () => console.log(`🚀 Live at http://localhost:${PORT}`));
