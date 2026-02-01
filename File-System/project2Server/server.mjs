@@ -18,10 +18,10 @@ app.get("/name", async (req, res) => {
 
 app.post("/add-task", async (req, res) => {
   try {
-    const { name } = req.body;
-    if (!name) return res.status(400).json({ error: "Missing data" });
+      const { name ,description } = req.body;
+    if (!name || !description) return res.status(400).json({ error: "Missing data" });
     const readName = await readPost();
-    readName.push({ name, id: Date.now() });
+    readName.push({ name,description, id: Date.now() });
     await writePost(readName);
     res.status(201).json({ success: true });
   } catch (error) {
