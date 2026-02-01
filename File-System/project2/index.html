@@ -3,37 +3,164 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Simple data handeling</title>
+    <title>Task Manager Dashboard</title>
+    <style>
+      /* --- Root & Layout --- */
+      body {
+        font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        background-color: #f8f9fa;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        padding-top: 50px;
+      }
+
+      .app-container {
+        width: 100%;
+        max-width: 500px;
+        background: #ffffff;
+        padding: 30px;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      }
+
+      h2 {
+        text-align: center;
+        color: #2d3436;
+        margin-bottom: 25px;
+        font-weight: 700;
+      }
+
+      /* --- Form Styling --- */
+      #form {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-bottom: 30px;
+      }
+
+      input {
+        padding: 14px;
+        border: 2px solid #edf2f7;
+        border-radius: 10px;
+        font-size: 15px;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+
+      input:focus {
+        border-color: #007bff;
+      }
+
+      #btn {
+        padding: 14px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background 0.3s;
+      }
+
+      #btn:hover {
+        background-color: #0056b3;
+      }
+
+      #btn:disabled {
+        background-color: #a0aec0;
+        cursor: not-allowed;
+      }
+
+      /* --- Dynamic Card Styling (innerHTML) --- */
+      #nameContainer {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .item-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        padding: 16px;
+        border-radius: 12px;
+        position: relative;
+        transition: transform 0.2s, box-shadow 0.2s;
+        border-left: 6px solid #007bff;
+      }
+
+      .item-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      }
+
+      .item-card h4 {
+        margin: 0 0 5px 0;
+        color: #2d3436;
+        font-size: 18px;
+        text-transform: capitalize;
+      }
+
+      .item-card p {
+        margin: 0 0 15px 0;
+        color: #636e72;
+        font-size: 14px;
+        line-height: 1.4;
+      }
+
+      .del-btn {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 13px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: block;
+        margin-left: auto; /* Push to the right */
+      }
+
+      .empty-msg {
+        text-align: center;
+        color: #b2bec3;
+        font-style: italic;
+        margin-top: 20px;
+      }
+    </style>
   </head>
   <body>
-    <form id="form">
-      <input type="text" name="name" id="nameField" />
-      <button type="submit" id="btn">Add</button>
-    </form>
-    <div id="nameContainer"></div>
+    <div class="app-container">
+      <h2>My Tasks</h2>
+
+      <form id="form">
+        <input type="text" id="nameField" placeholder="Enter task name (e.g., Build API)" required />
+        <input type="text" id="description" placeholder="Enter details (e.g., Use Express and Node)" required />
+        <button type="submit" id="btn">Add Task</button>
+      </form>
+
+      <div id="nameContainer"></div>
+    </div>
+
     <script>
       const form = document.getElementById("form");
       const container = document.getElementById("nameContainer");
 
-      // 1. Grab HTML elements
-      // 2. Create a function to GET data and show it in the table
-      // 3. Create a listener for the form to POST new data
-      // 4. Create a function to DELETE data
-
+      // --- CREATE: POST Listener ---
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
         const name = document.getElementById("nameField").value;
-        console.log(name);
+        const description = document.getElementById("description").value;
         const btn = document.getElementById("btn");
 
-        btn.innerText = "Posting..";
-        btn.disableed = true;
+        btn.innerText = "Posting...";
+        btn.disabled = true;
 
         try {
           const res = await fetch("/add-task", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name }),
+            body: JSON.stringify({ name, description }),
           });
 
           if (res.ok) {
@@ -49,51 +176,73 @@
         }
       });
 
+      // --- READ: GET Data and Show in Table (Cards) ---
       async function loadName() {
-        const res = await fetch("/name");
-        const data = await res.json();
+        try {
+          const res = await fetch("/name");
+          const data = await res.json();
 
-        container.innerHTML = "";
+          container.innerHTML = "";
 
-        // Inside your forEach
-        // Inside your loadName forEach
-        data.forEach((n) => {
-          const div = document.createElement("div");
-          // FIX 1: Correct onclick syntax and pass ID + this
-          div.innerHTML = `
-            <p>${n.name}</p>
-            <button onclick="delData(${n.id}, this)" style="background-color:red; color:white;">Delete</button>
-        `;
-          container.appendChild(div);
-        });
+          if (data.length === 0) {
+            container.innerHTML = `<p class="empty-msg">No tasks found. Add something above!</p>`;
+            return;
+          }
 
-        // ... inside your script ...
+          data.forEach((n) => {
+            const div = document.createElement("div");
+            div.className = "item-card"; 
+            
+            // Note: onclick passes n.id (from JSON) and 'this' (the button element)
+            div.innerHTML = `
+              <h4>${n.name}</h4>
+              <p>${n.description}</p>
+              <button class="del-btn" onclick="delData(${n.id}, this)" style="background-color: #ff7675; color: white;">
+                Delete
+              </button>
+            `;
+            container.appendChild(div);
+          });
+        } catch (error) {
+          container.innerHTML = `<p class="empty-msg" style="color:red">Error connecting to server.</p>`;
+        }
       }
-      loadName(); // FIX 2: Call this at the end so data shows up on refresh!
 
+      // --- DELETE: Function with Confirmation ---
       async function delData(id, buttonElement) {
+        // Confirmation Toggle
         if (buttonElement.innerText === "Delete") {
-          buttonElement.innerText = "Are you sure?";
-          buttonElement.style.backgroundColor = "orange";
+          buttonElement.innerText = "Sure?";
+          buttonElement.style.backgroundColor = "#fdcb6e"; // Orange
+          
           setTimeout(() => {
-            buttonElement.innerText = "Delete";
-            buttonElement.style.backgroundColor = "red";
+            if (buttonElement && buttonElement.innerText === "Sure?") {
+              buttonElement.innerText = "Delete";
+              buttonElement.style.backgroundColor = "#ff7675"; // Back to Red
+            }
           }, 3000);
           return;
         }
 
-        buttonElement.innerText = "Deleting..";
+        // Real Delete Action
+        buttonElement.innerText = "Deleting...";
         buttonElement.disabled = true;
+
         try {
+          // IMPORTANT: Server route must match app.delete("/delete-name/:id")
           const res = await fetch(`/delete-name/${id}`, { method: "DELETE" });
           if (res.ok) {
             loadName();
           }
         } catch (error) {
+          console.error("Delete failed:", error);
           buttonElement.innerText = "Error!";
           buttonElement.disabled = false;
         }
       }
+
+      // Initial Load
+      loadName();
     </script>
   </body>
 </html>
