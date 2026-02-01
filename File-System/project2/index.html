@@ -7,7 +7,7 @@
     <style>
       /* --- Root & Layout --- */
       body {
-        font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        font-family: "Segoe UI", Roboto, sans-serif;
         background-color: #f8f9fa;
         margin: 0;
         display: flex;
@@ -24,121 +24,54 @@
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
       }
 
-      h2 {
-        text-align: center;
-        color: #2d3436;
-        margin-bottom: 25px;
-        font-weight: 700;
-      }
+      h2 { text-align: center; color: #2d3436; margin-bottom: 25px; }
 
       /* --- Form Styling --- */
-      #form {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        margin-bottom: 30px;
-      }
+      #form { display: flex; flex-direction: column; gap: 12px; margin-bottom: 30px; }
+      input { padding: 14px; border: 2px solid #edf2f7; border-radius: 10px; outline: none; transition: 0.2s; }
+      input:focus { border-color: #007bff; }
+      #btn { padding: 14px; background-color: #007bff; color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; }
 
-      input {
-        padding: 14px;
-        border: 2px solid #edf2f7;
-        border-radius: 10px;
-        font-size: 15px;
-        outline: none;
-        transition: border-color 0.2s;
-      }
-
-      input:focus {
-        border-color: #007bff;
-      }
-
-      #btn {
-        padding: 14px;
-        background-color: #007bff;
-        color: white;
-        border: none;
-        border-radius: 10px;
-        font-weight: 600;
-        font-size: 16px;
-        cursor: pointer;
-        transition: background 0.3s;
-      }
-
-      #btn:hover {
-        background-color: #0056b3;
-      }
-
-      #btn:disabled {
-        background-color: #a0aec0;
-        cursor: not-allowed;
-      }
-
-      /* --- Dynamic Card Styling (innerHTML) --- */
-      #nameContainer {
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-      }
-
+      /* --- Card Styling --- */
       .item-card {
         background: #ffffff;
         border: 1px solid #e2e8f0;
         padding: 16px;
         border-radius: 12px;
-        position: relative;
-        transition: transform 0.2s, box-shadow 0.2s;
+        margin-bottom: 15px;
         border-left: 6px solid #007bff;
       }
+      .item-card h4 { margin: 0 0 5px 0; color: #2d3436; }
+      .item-card p { margin: 0 0 15px 0; color: #636e72; font-size: 14px; }
 
-      .item-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-      }
+      /* --- Button Grouping --- */
+      .button-group { display: flex; justify-content: flex-end; gap: 8px; }
 
-      .item-card h4 {
-        margin: 0 0 5px 0;
-        color: #2d3436;
-        font-size: 18px;
-        text-transform: capitalize;
-      }
+      .del-btn { background-color: #ff7675; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; }
+      .edit-btn { background-color: #3498db; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; }
+      
+      /* Save State - Green */
+      .save-mode { background-color: #2ecc71 !important; }
 
-      .item-card p {
-        margin: 0 0 15px 0;
-        color: #636e72;
-        font-size: 14px;
-        line-height: 1.4;
-      }
-
-      .del-btn {
-        padding: 8px 16px;
-        border: none;
-        border-radius: 8px;
-        font-weight: 600;
-        font-size: 13px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        display: block;
-        margin-left: auto; /* Push to the right */
-      }
-
-      .empty-msg {
-        text-align: center;
-        color: #b2bec3;
-        font-style: italic;
-        margin-top: 20px;
+      /* Styled input for Edit Mode */
+      .edit-input {
+        width: 100%;
+        padding: 8px;
+        border: 2px solid #f1c40f;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        box-sizing: border-box;
       }
     </style>
   </head>
   <body>
     <div class="app-container">
       <h2>My Tasks</h2>
-
       <form id="form">
-        <input type="text" id="nameField" placeholder="Enter task name (e.g., Build API)" required />
-        <input type="text" id="description" placeholder="Enter details (e.g., Use Express and Node)" required />
+        <input type="text" id="nameField" placeholder="Task Name" required />
+        <input type="text" id="description" placeholder="Details" required />
         <button type="submit" id="btn">Add Task</button>
       </form>
-
       <div id="nameContainer"></div>
     </div>
 
@@ -146,14 +79,12 @@
       const form = document.getElementById("form");
       const container = document.getElementById("nameContainer");
 
-      // --- CREATE: POST Listener ---
+      // --- CREATE ---
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
         const name = document.getElementById("nameField").value;
         const description = document.getElementById("description").value;
         const btn = document.getElementById("btn");
-
-        btn.innerText = "Posting...";
         btn.disabled = true;
 
         try {
@@ -162,86 +93,68 @@
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ name, description }),
           });
-
-          if (res.ok) {
-            form.reset();
-            loadName();
-          }
-        } catch (error) {
-          console.error("Post failed:", error);
-          alert("Could not save task.");
-        } finally {
-          btn.innerText = "Add Task";
-          btn.disabled = false;
-        }
+          if (res.ok) { form.reset(); loadName(); }
+        } finally { btn.disabled = false; }
       });
 
-      // --- READ: GET Data and Show in Table (Cards) ---
+      // --- READ ---
       async function loadName() {
-        try {
-          const res = await fetch("/name");
-          const data = await res.json();
-
-          container.innerHTML = "";
-
-          if (data.length === 0) {
-            container.innerHTML = `<p class="empty-msg">No tasks found. Add something above!</p>`;
-            return;
-          }
-
-          data.forEach((n) => {
-            const div = document.createElement("div");
-            div.className = "item-card"; 
-            
-            // Note: onclick passes n.id (from JSON) and 'this' (the button element)
-            div.innerHTML = `
-              <h4>${n.name}</h4>
-              <p>${n.description}</p>
-              <button class="del-btn" onclick="delData(${n.id}, this)" style="background-color: #ff7675; color: white;">
-                Delete
-              </button>
-            `;
-            container.appendChild(div);
-          });
-        } catch (error) {
-          container.innerHTML = `<p class="empty-msg" style="color:red">Error connecting to server.</p>`;
-        }
+        const res = await fetch("/name");
+        const data = await res.json();
+        container.innerHTML = data.length === 0 ? `<p class="empty-msg">No tasks found.</p>` : "";
+        
+        data.forEach((n) => {
+          const div = document.createElement("div");
+          div.className = "item-card";
+          div.innerHTML = `
+            <h4>${n.name}</h4>
+            <p id="description-${n.id}">${n.description}</p>
+            <div class="button-group">
+              <button class="edit-btn" onclick="editData(${n.id}, this)">Edit</button>
+              <button class="del-btn" onclick="delData(${n.id}, this)">Delete</button>
+            </div>
+          `;
+          container.appendChild(div);
+        });
       }
 
-      // --- DELETE: Function with Confirmation ---
-      async function delData(id, buttonElement) {
-        // Confirmation Toggle
-        if (buttonElement.innerText === "Delete") {
-          buttonElement.innerText = "Sure?";
-          buttonElement.style.backgroundColor = "#fdcb6e"; // Orange
-          
-          setTimeout(() => {
-            if (buttonElement && buttonElement.innerText === "Sure?") {
-              buttonElement.innerText = "Delete";
-              buttonElement.style.backgroundColor = "#ff7675"; // Back to Red
-            }
-          }, 3000);
+      // --- UPDATE Logic ---
+      function editData(id, editBtn) {
+        const description = document.getElementById(`description-${id}`);
+        const originalText = description.innerText;
+
+        // Apply styled input class
+        description.innerHTML = `<input type="text" id="input-${id}" class="edit-input" value="${originalText}">`;
+        
+        editBtn.innerText = "Save";
+        editBtn.classList.add("save-mode");
+        editBtn.onclick = () => saveData(id, editBtn);
+      }
+
+      async function saveData(id, saveBtn) {
+        const newDesc = document.getElementById(`input-${id}`).value;
+        try {
+          const res = await fetch(`/update-data/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ description: newDesc }),
+          });
+          if (res.ok) loadName();
+        } catch (error) { console.error(error); }
+      }
+
+      // --- DELETE ---
+      async function delData(id, btn) {
+        if (btn.innerText === "Delete") {
+          btn.innerText = "Sure?";
+          btn.style.backgroundColor = "#fdcb6e";
+          setTimeout(() => { if(btn.innerText === "Sure?") { btn.innerText = "Delete"; btn.style.backgroundColor = "#ff7675"; }}, 3000);
           return;
         }
-
-        // Real Delete Action
-        buttonElement.innerText = "Deleting...";
-        buttonElement.disabled = true;
-
-        try {
-          // IMPORTANT: Server route must match app.delete("/delete-name/:id")
-          const res = await fetch(`/delete-name/${id}`, { method: "DELETE" });
-          if (res.ok) {
-            loadName();
-          }
-        } catch (error) {
-          console.error("Delete failed:", error);
-          buttonElement.innerText = "Error!";
-          buttonElement.disabled = false;
-        }
+        await fetch(`/delete-name/${id}`, { method: "DELETE" });
+        loadName();
       }
 
-      // Initial Load
       loadName();
     </script>
   </body>
