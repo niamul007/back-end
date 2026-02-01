@@ -64,6 +64,18 @@ async function loadExpense() {
   });
 }
 
+async function delEx(id) {
+  try {
+    const res = await fetch(`/delete-expense/${id}`, {method: "DELETE",});
+
+    if (res.ok) {
+      loadExpense();
+    }
+  } catch (err) {
+    console.log(err)
+  }
+}
+
 loadExpense();
 
 // === STEP 2: THE GET FUNCTION (loadData) ===
