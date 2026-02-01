@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PennyWise | Budget Tracker</title>
+    <style>
+        :root {
+            --primary: #6c5ce7;
+            --danger: #ff7675;
+            --success: #00b894;
+            --bg: #dfe6e9;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--bg);
+            display: flex;
+            justify-content: center;
+            padding: 50px 20px;
+            margin: 0;
+        }
+
+        .card {
+            width: 100%;
+            max-width: 550px;
+            background: white;
+            padding: 30px;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        h1 { text-align: center; color: #2d3436; margin-bottom: 8px; }
+        .subtitle { text-align: center; color: #636e72; margin-bottom: 30px; font-size: 0.9rem; }
+
+        /* Expense Form */
+        #budgetForm {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 12px;
+            margin-bottom: 40px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 16px;
+        }
+
+        input {
+            padding: 12px;
+            border: 2px solid #eee;
+            border-radius: 10px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input:focus { border-color: var(--primary); }
+
+        #addBtn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* Expense List Items */
+        .expense-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: #fff;
+            border: 1px solid #edf2f7;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            transition: 0.2s;
+        }
+
+        .expense-item:hover { transform: scale(1.02); border-color: var(--primary); }
+
+        .item-info h4 { margin: 0; color: #2d3436; }
+        .item-info span { color: var(--success); font-weight: bold; font-size: 1.1rem; }
+
+        /* Action Buttons */
+        .actions { display: flex; gap: 10px; }
+        
+        .btn-edit { background: #f1f2f6; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; color: #747d8c; }
+        .btn-del { background: #ffeaa7; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; color: #d63031; }
+        
+        /* Edit Mode Styles */
+        .edit-input-field { width: 80px; padding: 5px; border: 2px solid var(--primary); border-radius: 6px; }
+        .save-btn { background: var(--success) !important; color: white !important; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h1>PennyWise 💸</h1>
+    <p class="subtitle">Track your spending, master your life.</p>
+
+    <form id="budgetForm">
+        <input type="text" id="expenseName" placeholder="What did you buy?" required>
+        <input type="number" id="expenseAmount" placeholder="Amount ($)" required>
+        <button type="submit" id="addBtn">Add</button>
+    </form>
+
+    <div id="expenseList">
+        </div>
+</div>
+</body>
+</html>
