@@ -34,6 +34,19 @@ app.post("/add-expense", async (req, res) => {
   }
 });
 
+app.delete("/delete-expense/:id", async (req, res) => {
+  try {
+    const {id} = req.params;
+    const idToDel = Number(id)
+    const read = await readPost();
+    const update = read.filter((i) => i.id !== idToDel);
+    await writePost(update);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: "Delete failed" });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on: http://localhost:${PORT}`);
 });
