@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeVault | Financial Creditor System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+    <h1>SafeVault System 🛡️</h1>
+    
+    <div class="stats-grid">
+        <div class="stat-box"><span>Total Outstanding</span><strong id="totalOwed">$0</strong></div>
+        <div class="stat-box"><span>Total Collected</span><strong id="totalPaid">$0</strong></div>
+        <div class="stat-box"><span>Client Count</span><strong id="clientCount">0</strong></div>
+    </div>
+
+    <div class="panel">
+        <h3>Register New Debt</h3>
+        <form id="debtForm" class="form-row">
+            <input type="text" id="clientName" placeholder="Full Name" required>
+            <input type="number" id="debtAmount" placeholder="Total Debt ($)" required>
+            <input type="number" id="initialPay" placeholder="Initial Payment ($)" value="0">
+            <button type="submit" id="addBtn">Register</button>
+        </form>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Client Name</th>
+                <th>Debt Amount</th>
+                <th>Remaining</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="clientTableBody">
+            </tbody>
+    </table>
+</div>
+
+</body>
+</html>
