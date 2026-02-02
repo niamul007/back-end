@@ -53,8 +53,7 @@ async function loadExpense() {
     const div = document.createElement("div");
     div.className = "ex-card";
     div.innerHTML = `
-    <p>${ex.cause}</p>
-    <p>$${ex.amount}</p>
+        <p id="cause-${ex.id}">${ex.cause}</p> <p>$${ex.amount}</p>
         <div class="button-group">
             <button class="edit-btn" onclick="editEx(${ex.id}, this)">Edit</button>
             <button class="del-btn" onclick="delEx(${ex.id}, this)">Delete</button>
@@ -64,15 +63,36 @@ async function loadExpense() {
   });
 }
 
+// --- FIXED EDIT ---
+function editEx(id, editBtn) {
+  const causeEl = document.getElementById(`cause-${id}`); // Changed ex.id to id
+  const pTag = causeEl.innerText;
+  causeEl.innerHTML = `<input type="text" id="input-${id}" value="${pTag}">`;
+  editBtn.innerText = "Save";
+  editBtn.onclick = () => saveEx(id, editBtn); // Fixed lowercase onclick
+}
+
+// --- FIXED SAVE ---
+async function saveEx(id, saveBtn) {
+  const newValue = document.getElementById(`input-${id}`).value; // Get .value, not the element
+  const res = await fetch(`/update-expense/${id}`, {
+    // Added leading slash
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ cause: newValue }), // Moved body outside headers
+  });
+  if (res.ok) loadExpense();
+}
+
 async function delEx(id) {
   try {
-    const res = await fetch(`/delete-expense/${id}`, {method: "DELETE",});
+    const res = await fetch(`/delete-expense/${id}`, { method: "DELETE" });
 
     if (res.ok) {
       loadExpense();
     }
   } catch (err) {
-    console.log(err)
+    console.log(err);
   }
 }
 
