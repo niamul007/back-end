@@ -80,6 +80,15 @@ debtForm.addEventListener("submit", async (e) => {
         addBtn.disabled = false;
     }
 });
+window.handlePayment = async (id) => {
+    const res = await fetch(`/api/pay/${id}`, { method: "PUT" });
+    
+    if (res.ok) {
+        loadClients(); // Refresh the table and stats automatically!
+    } else {
+        alert("Payment failed");
+    }
+};
 
 // --- 3. Dashboard Stats Logic ---
 function updateStats(clients) {
