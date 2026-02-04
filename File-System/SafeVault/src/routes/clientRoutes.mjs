@@ -1,6 +1,6 @@
 import express from "express";
 // Import your "Brain" (Controller)
-import { getClients, addClient } from "../controllers/clientController.mjs";
+import { getClients , addClient } from "../controllers/clientControllers.mjs";
 // Import your "Guard" (Middleware)
 import { validateClient } from "../middleware/validator.mjs";
 
