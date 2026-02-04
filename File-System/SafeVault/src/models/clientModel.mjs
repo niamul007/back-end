@@ -4,7 +4,7 @@ import fs from "node:fs/promises";
 // 1. Define the path ONCE at the top. 
 // This makes the file cleaner and easier to maintain.
 const __dirname = import.meta.dirname;
-const filePath = path.join(__dirname, "..", "data", "clients.json");
+const filePath = path.join(__dirname, "..","..", "data", "clients.json");
 
 /**
  * LIBRARIAN ROLE: Get all clients from the JSON file
@@ -12,13 +12,20 @@ const filePath = path.join(__dirname, "..", "data", "clients.json");
 export async function getAllClients() {
   try {
     const content = await fs.readFile(filePath, "utf-8");
+
+    // Check if the file is literally empty (0 characters)
+    if (!content || content.trim() === "") {
+      return []; 
+    }
+
     return JSON.parse(content);
   } catch (error) {
-    // If file doesn't exist, return empty array instead of crashing
-    if (error.code === "ENOENT") return [];
-    
-    // Pro-Tip: Rethrow the error so the CONTROLLER knows something went wrong
-    throw new Error("Database read failed"); 
+    if (error.code === "ENOENT") {
+        // If file doesn't exist, create it with an empty array
+        await fs.writeFile(filePath, "[]");
+        return [];
+    }
+    throw new Error("Database read failed");
   }
 }
 
