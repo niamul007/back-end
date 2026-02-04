@@ -1,22 +1,12 @@
 [
   {
-    "username": "Tonya Dailey",
-    "message": "yoiyu",
-    "id": 1769603294205
+    "cause": "Teacher's bill",
+    "amount": "54",
+    "id": 1770032745501
   },
   {
-    "username": "Tonya Dailey",
-    "message": "fi am nto a sfmriegfsd",
-    "id": 1769603891724
-  },
-  {
-    "username": "Tonya Dailey",
-    "message": "trherthrethreth",
-    "id": 1769604639586
-  },
-  {
-    "username": "Niamul Hoque",
-    "message": "I am just working on myself and just try to built this ",
-    "id": 1769605749019
+    "cause": "Grocery",
+    "amount": "43",
+    "id": 1770040356248
   }
 ]

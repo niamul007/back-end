@@ -80,13 +80,38 @@ debtForm.addEventListener("submit", async (e) => {
         addBtn.disabled = false;
     }
 });
+
 window.handlePayment = async (id) => {
-    const res = await fetch(`/api/pay/${id}`, { method: "PUT" });
-    
-    if (res.ok) {
-        loadClients(); // Refresh the table and stats automatically!
-    } else {
-        alert("Payment failed");
+    // 1. Ask the user for the amount
+    const amount = prompt("Enter payment amount:");
+
+    // 2. Basic validation: If they hit cancel or type nothing, stop
+    if (amount === null || amount === "") return;
+
+    // 3. Convert string to a number
+    const payment = Number(amount);
+
+    if (isNaN(payment) || payment <= 0) {
+        alert("Please enter a valid positive number.");
+        return;
+    }
+
+    // 4. Send the specific amount in the body of the PUT request
+    try {
+        const res = await fetch(`/api/pay/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ amount: payment }) // Sending the dynamic amount!
+        });
+
+        if (res.ok) {
+            loadClients(); 
+        } else {
+            const errorData = await res.json();
+            alert(`Error: ${errorData.error}`);
+        }
+    } catch (err) {
+        console.error("Payment failed", err);
     }
 };
 

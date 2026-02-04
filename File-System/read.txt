@@ -1,0 +1,123 @@
+// === STEP 1: IMPORTS ===
+// Import Express, Path, and your custom read/write Utilities
+
+// === STEP 2: INITIALIZATION ===
+// Create the 'app' instance and define your PORT (e.g., 4001)
+
+// === STEP 3: STATIC MIDDLEWARE ===
+// Tell Express where your HTML/CSS/JS folder is (using path.join)
+
+// === STEP 4: JSON MIDDLEWARE ===
+// Enable express.json() so the server can parse incoming form data
+
+// === STEP 5: THE GET ROUTE ===
+// 1. Create app.get('/route')
+// 2. Read the JSON file using your Utility
+// 3. Send the data back to the browser using res.json()
+
+// === STEP 6: THE POST ROUTE ===
+// 1. Create app.post('/route')
+// 2. Destructure the data from req.body
+// 3. Read current file -> Push new item with ID -> Write back to file
+// 4. Send a success response (res.status(201))
+
+// === STEP 7: THE DELETE ROUTE ===
+// 1. Create app.delete('/route/:id')
+// 2. Grab the ID from req.params
+// 3. Read file -> Filter out the item -> Write updated list to file
+// 4. Send a success response
+
+// === STEP 8: THE LISTEN ===
+// Start the server and console.log the URL
+
+
+// === STEP 1: SELECTORS ===
+// Grab the Form, Input field, and the Display Container (div or tbody)
+
+// === STEP 2: THE GET FUNCTION (loadData) ===
+// 1. Create an async function
+// 2. Fetch the data from your GET route
+// 3. Convert response to JSON
+// 4. Clear the container (innerHTML = "")
+// 5. Loop (forEach) through data to create elements and appendChild
+
+// === STEP 3: THE POST LISTENER ===
+// 1. Add 'submit' event listener to the form
+// 2. preventDefault() to stop refresh
+// 3. Capture input values and show "Loading..." on the button
+// 4. Fetch the POST route (Method: POST, Headers: JSON, Body: stringify)
+// 5. If successful: reset form and call loadData() to refresh the list
+
+// === STEP 4: THE DELETE FUNCTION ===
+// 1. Create async function that accepts (id)
+// 2. (Optional) Add your "Are you sure?" button logic
+// 3. Fetch the DELETE route (Method: DELETE) using the ID in the URL
+// 4. If successful: call loadData() to refresh the list
+
+// === STEP 5: INITIALIZATION ===
+// Call loadData() once at the bottom so the page isn't empty on load
+
+
+
+// === FORM SUBMIT LISTENER ===
+// 1. Target the form and add an 'submit' event listener
+// 2. STOP the page from refreshing (e.preventDefault())
+
+// 3. CAPTURE the user input values (Cause and Amount)
+//    - const cause = document.getElementById('...').value;
+//    - const amount = document.getElementById('...').value;
+
+// 4. PREPARE THE UI (Feedback)
+//    - Change button text to "Saving..."
+//    - Disable the button to prevent double-clicks
+
+// 5. THE FETCH REQUEST (The Handshake)
+//    - URL: '/add-expense'
+//    - Method: 'POST'
+//    - Headers: { 'Content-Type': 'application/json' }
+//    - Body: JSON.stringify({ cause, amount })
+
+// 6. WAIT FOR RESPONSE (The Output)
+//    - Check if(res.ok)
+//    - If success: 
+//         a. Reset the form fields
+//         b. Call loadEx() to refresh the list with the new data
+
+// 7. CLEAN UP (Finalize)
+//    - Regardless of success or failure, set button back to "Add"
+//    - Re-enable the button
+
+// === STEP 1: THE EDIT TRIGGER (UI Change) ===
+// 1. Target the specific <p> or <span> using the ID (e.g., `amount-${id}`).
+// 2. Store the current text in a variable (originalValue).
+// 3. Swap the innerHTML of that element for an <input> with that value.
+// 4. Transform the "Edit" button into a "Save" button (change text and color).
+// 5. Change the button's .onclick to point to your Save function.
+
+// === STEP 2: THE SAVE FUNCTION (The Fetch) ===
+// 1. Grab the NEW value from the input field you just created.
+// 2. Show "Saving..." feedback on the button and disable it.
+// 3. START THE FETCH:
+//    - URL: `/update-expense/${id}`
+//    - Method: 'PUT'
+//    - Headers: { 'Content-Type': 'application/json' }
+//    - Body: JSON.stringify({ amount: newValue })
+// 4. WAIT for the response (res.ok).
+// 5. ACTION: Call loadEx() to redraw the list with the updated value.
+
+
+// === THE PUT ROUTE HANDLER ===
+// 1. Create the route: app.put("/update-expense/:id", async (req, res) => { ... })
+// 2. EXTRACT the ID from req.params.
+// 3. EXTRACT the NEW data from req.body (e.g., { amount }).
+
+// 4. READ the current data file using your readPost() utility.
+
+// 5. UPDATE THE ARRAY:
+//    - Use .map() to go through the data.
+//    - IF the item.id matches the req.params.id:
+//        - Return the item but SPREAD (...) the new data into it.
+//    - ELSE: return the item exactly as it was.
+
+// 6. SAVE: Use writePost() to save this updated array back to the file.
+// 7. OUTPUT: Send res.json({ success: true }) back to the script.

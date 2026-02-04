@@ -1,0 +1,29 @@
+[
+  {
+    "id": "a1c0d9df-0d96-4556-879d-e0726ba4de6e",
+    "clientName": "Niamul",
+    "debtAmount": 324,
+    "initialAmount": 226,
+    "remainingBalance": 98,
+    "status": "active",
+    "createdAt": "2026-02-04T11:18:52.569Z"
+  },
+  {
+    "id": "e3ce495b-147d-460a-848a-0cea0968998d",
+    "clientName": "jack",
+    "debtAmount": 4535,
+    "initialAmount": 450,
+    "remainingBalance": 4085,
+    "status": "active",
+    "createdAt": "2026-02-04T11:19:45.683Z"
+  },
+  {
+    "id": "4de285a0-9144-43d7-bca2-32ce8eb76fbd",
+    "clientName": "Jefry ",
+    "debtAmount": 23213,
+    "initialAmount": 4935,
+    "remainingBalance": 18278,
+    "status": "active",
+    "createdAt": "2026-02-04T14:10:01.135Z"
+  }
+]

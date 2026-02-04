@@ -39,37 +39,33 @@ export const addClient = async (req, res) => {
 };
 
 export const updatePayment = async (req, res) => {
-  const { id } = req.params; // The ID comes from the URL
-  const paymentAmount = 50; // Let's hardcode $50 for now
+    const { id } = req.params;
+    const { amount } = req.body; // Getting the dynamic amount from the frontend
 
-  try {
-    const clients = await getAllClients();
+    try {
+        const clients = await getAllClients();
+        const client = clients.find(c => c.id === id);
 
-    // --- YOUR TURN: Find the client ---
-    // Hint: Use .find() to find the client where client.id === id
-    const client = clients.find((c) => c.id === id);
+        if (!client) {
+            return res.status(404).json({ error: "Client not found" });
+        }
 
-    if (!client) {
-      return res.status(404).json({ error: "Client not found" });
+        // --- Senior Logic: Don't let them pay more than they owe ---
+        if (amount > client.remainingBalance) {
+            return res.status(400).json({ error: "Payment exceeds remaining balance" });
+        }
+
+        // Apply the payment
+        client.remainingBalance -= amount;
+        client.initialAmount += amount; // Tracking total paid
+
+        if (client.remainingBalance === 0) {
+            client.status = "cleared";
+        }
+
+        await updateClientsFile(clients);
+        res.status(200).json(client);
+    } catch (error) {
+        res.status(500).json({ error: "Internal server error" });
     }
-
-    // --- YOUR TURN: Update the math ---
-    // 1. Subtract paymentAmount from client.remainingBalance
-    // 2. Add paymentAmount to client.initialAmount (total paid)
-    // 3. If remainingBalance <= 0, set client.status = "cleared"
-
-    /* WRITE YOUR MATH HERE */
-    client.remainingBalance -= paymentAmount;
-    client.initialAmount += paymentAmount;
-
-    if (client.remainingBalance <= 0) {
-      client.status = "cleared";
-      client.remainingBalance = 0; // The "Floor": ensures no negative debt
-    }
-
-    await updateClientsFile(clients);
-    res.status(200).json(client);
-  } catch (error) {
-    res.status(500).json({ error: "Update failed" });
-  }
 };
