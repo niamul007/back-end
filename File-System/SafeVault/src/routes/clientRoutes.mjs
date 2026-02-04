@@ -4,6 +4,8 @@ import { getClients , addClient } from "../controllers/clientControllers.mjs";
 // Import your "Guard" (Middleware)
 import { validateClient } from "../middleware/validator.mjs";
 
+import { updatePayment } from "../controllers/clientControllers.mjs";
+
 const router = express.Router();
 
 // GET: Fetch all clients
@@ -14,5 +16,7 @@ router.get("/clients", getClients);
 // PATH: http://localhost:3000/api/add
 // Notice: validator runs BEFORE addClient
 router.post("/add", validateClient, addClient);
+
+router.put("/pay/:id", updatePayment);
 
 export default router;
