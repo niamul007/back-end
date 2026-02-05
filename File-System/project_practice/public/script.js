@@ -6,7 +6,7 @@ async function loadItems() {
   try {
     const res = await fetch("/api/items");
     if (!res.ok) throw new Error("Failed to fetch items");
-    
+
     const data = await res.json();
     container.innerHTML = "";
 
@@ -14,11 +14,11 @@ async function loadItems() {
       // FIX: Create a NEW div for every item, don't try to get a non-existent "div" id
       const div = document.createElement("div");
       div.className = "item-row"; // Add styling class
-      
+
       // FIX: Use item.itemName (check your backend field names!)
       div.innerHTML = `
           <div class="item-info">
-            <span class="${item.bought ? 'bought' : ''}">${item.itemName}</span>
+            <span class="${item.bought ? "bought" : ""}">${item.item}</span>
             <small>x${item.itemQty}</small>
           </div>
           <button class="del-btn" onclick="window.deleteItem('${item.id}')">Delete</button>
@@ -64,6 +64,18 @@ form.addEventListener("submit", async (e) => {
     submitBtn.disabled = false;
   }
 });
+
+window.deleteItem = async (id) => {
+  if (!confirm("Are you sure?")) return; // Senior tip: Always ask before deleting!
+  try {
+    const res = await fetch(`/api/delete-item/${id}`, { method: "DELETE" });
+    if (res.ok) {
+      loadItems();
+    }
+  } catch (error) {
+    console.error("Delete method failed");
+  }
+};
 
 // Initial Run
 loadItems();
