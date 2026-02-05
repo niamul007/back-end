@@ -1,10 +1,8 @@
 import path from "node:path";
 import fs from "node:fs/promises";
-import { readFile } from "node:fs";
-import { it } from "node:test";
 
 const __dirname = import.meta.dirname;
-const filePath = path.join(__dirname, "..", "..", "data");
+const filePath = path.join(__dirname, "..", "..", "data","tracker.json");
 
 export async function getAllItem() {
   try {
@@ -26,8 +24,6 @@ export async function getAllItem() {
 
 export async function saveAllItem(data) {
   try {
-    const { item, itemQty } = requestAnimationFrame.body;
-
     await fs.writeFile(filePath, JSON.stringify(data, null, 2), "utf-8");
     return true;
   } catch (error) {
