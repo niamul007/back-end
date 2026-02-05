@@ -1,6 +1,8 @@
 import { getAllItem, saveAllItem } from "../model/models.mjs";
 import crypto from "crypto";
-const getItem = async (req, res) => {
+
+
+export const getItem = async (req, res) => {
   try {
     const read = await getAllItem();
     res.status(200).json(read);
@@ -9,7 +11,7 @@ const getItem = async (req, res) => {
   }
 };
 
-const postItem = async (req, res) => {
+export const postItem = async (req, res) => {
   const { item, itemQty } = req.body;
   try {
     const content = await getAllItem();
@@ -18,6 +20,7 @@ const postItem = async (req, res) => {
       item: item,
       itemQty: Number(itemQty),
       createdAt: new Date().toISOString(),
+      bought: false
     };
     content.push(newItem);
     await saveAllItem(content);
