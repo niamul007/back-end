@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MVC Grocery Tracker</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; max-width: 400px; margin: auto; }
+        .item-row { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #ddd; }
+        .bought { text-decoration: line-through; color: gray; }
+    </style>
+</head>
+<body>
+    <h2>🛒 Grocery List</h2>
+    
+    <form id="groceryForm">
+        <input type="text" id="itemName" placeholder="Item name..." required>
+        <input type="number" id="itemQty" placeholder="Qty" style="width: 50px;" required>
+        <button type="submit">Add</button>
+    </form>
+
+    <div id="listContainer" style="margin-top: 20px;">
+        </div>
+
+    <script src="script.js" type="module"></script>
+</body>
+</html>
