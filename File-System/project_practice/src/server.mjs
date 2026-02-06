@@ -5,7 +5,7 @@ import router from "./routes/routers.mjs";
 
 const __dirname = import.meta.dirname;
 const app = express();
-const PORT = 4001;
+const PORT = 4051;
 const filePath = path.join(__dirname, "..", "public");
 
 app.use(express.json());

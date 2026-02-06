@@ -91,21 +91,23 @@ export async function toggleItem(req, res) {
   }
 }
 
+// itemController.mjs
 export const searchItems = async (req, res) => {
   try {
-    const { name } = req.query; // If URL is /api/search?name=milk, name is "milk"
+    const name = req.query.name; // Explicitly get 'name'
     const allItems = await getAllItem();
 
-    if (!name) {
-        return res.json(allItems); // If no search term, return everything
+    if (!name || name.trim() === "") {
+        return res.json(allItems);
     }
 
     const filtered = allItems.filter(i => 
-        i.item.toLowerCase().includes(name.toLowerCase())
+        i.item && i.item.toLowerCase().includes(name.toLowerCase())
     );
 
     res.json(filtered);
   } catch (error) {
+    console.error(error); // Log the actual error to your terminal
     res.status(500).json({ error: "Search failed" });
   }
 };
