@@ -70,3 +70,42 @@ export async function updateItem(req, res) {
     res.status(500).send("Error");
   }
 }
+
+export async function toggleItem(req, res) {
+  try {
+    const { id } = req.params;
+    const allItems = await getAllItem();
+    
+    const updated = allItems.map((item) => {
+      if (item.id === id) {
+        // The ! (NOT) operator flips true to false and false to true
+        return { ...item, bought: !item.bought };
+      }
+      return item;
+    });
+
+    await saveAllItem(updated);
+    res.status(200).json({ message: "Status updated" });
+  } catch (error) {
+    res.status(500).json({ error: "Toggle failed" });
+  }
+}
+
+export const searchItems = async (req, res) => {
+  try {
+    const { name } = req.query; // If URL is /api/search?name=milk, name is "milk"
+    const allItems = await getAllItem();
+
+    if (!name) {
+        return res.json(allItems); // If no search term, return everything
+    }
+
+    const filtered = allItems.filter(i => 
+        i.item.toLowerCase().includes(name.toLowerCase())
+    );
+
+    res.json(filtered);
+  } catch (error) {
+    res.status(500).json({ error: "Search failed" });
+  }
+};
