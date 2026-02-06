@@ -29,21 +29,44 @@ export const postItem = async (req, res) => {
   }
 };
 
-export async function delItem(req, res) { // FIX: Added req, res
+export async function delItem(req, res) {
+  // FIX: Added req, res
   const { id } = req.params; // FIX: Use params for URL IDs
 
   try {
     const allItems = await getAllItem();
-    
+
     // FIX: Save the result of the filter to a new variable
     const filteredList = allItems.filter((i) => i.id !== id);
 
     // FIX: Save the NEW list, not the old one
     await saveAllItem(filteredList);
-    
+
     // Respond with the new list so the frontend can update
     res.status(200).json(filteredList);
   } catch (error) {
     res.status(500).json({ error: "Failed to delete the item" });
+  }
+}
+
+export async function updateItem(req, res) {
+  console.log("Update requested for ID:", req.params.id);
+  console.log("New Text received:", req.body.newTxt);
+
+  try {
+    const read = await getAllItem();
+    const updated = read.map((i) => {
+      if (i.id === req.params.id) {
+        console.log("MATCH FOUND! Changing name to:", req.body.newTxt);
+        return { ...i, item: req.body.newTxt };
+      }
+      return i;
+    });
+
+    await saveAllItem(updated);
+    res.status(200).json(updated);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error");
   }
 }
