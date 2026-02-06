@@ -17,12 +17,17 @@ async function loadItems() {
 
       // FIX: Use item.itemName (check your backend field names!)
       div.innerHTML = `
-          <div class="item-info">
-            <span class="${item.bought ? "bought" : ""}">${item.item}</span>
-            <small>x${item.itemQty}</small>
-          </div>
-          <button class="del-btn" onclick="window.deleteItem('${item.id}')">Delete</button>
-      `;
+    <div class="item-info">
+        <span class="${item.bought ? "bought" : ""}" id="text-${item.id}" onClick = ${item.bought? "cross()" : ""} >
+            ${item.item}
+        </span>
+        <small>x${item.itemQty}</small>
+    </div>
+    <div class="actions">
+        <button class="edit-btn" onclick="window.editItem('${item.id}', this)">Edit</button>
+        <button class="del-btn" onclick="window.deleteItem('${item.id}')">Delete</button>
+    </div>
+`;
 
       container.appendChild(div);
     });
@@ -30,6 +35,52 @@ async function loadItems() {
     console.error(err);
   }
 }
+
+
+window.editItem = async (id, buttonElement) => {
+  // 1. YOU MUST DEFINE IT FIRST:
+  const textSpan = document.getElementById(`text-${id}`);
+
+  // 2. Check if it actually exists (Senior safety check)
+  if (!textSpan) {
+    console.error("Could not find the span element!");
+    return;
+  }
+
+  const originalTxt = textSpan.innerText;
+
+  // 3. NOW you can use it:
+  textSpan.innerHTML = `<input type="text" id="input-${id}" value="${originalTxt}">`;
+  
+  buttonElement.innerText = "Save";
+  buttonElement.onclick = () => window.saveData(id, buttonElement);
+};
+
+
+window.saveData = async (id, buttonElement) => {
+  const inputField = document.getElementById(`input-${id}`);
+  if (!inputField) return;
+
+  const newTxt = inputField.value;
+
+  try {
+    const res = await fetch(`/api/edit/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ newTxt: newTxt }), // Matches your controller
+    });
+
+    if (res.ok) {
+      // Once saved, reload the list to show the plain text again
+      await loadItems();
+    } else {
+      const errorData = await res.json();
+      alert("Update failed: " + errorData.error);
+    }
+  } catch (error) {
+    console.error("Critical error in saveData:", error);
+  }
+};
 
 // --- 2. Submit Logic ---
 form.addEventListener("submit", async (e) => {
