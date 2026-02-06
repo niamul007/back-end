@@ -18,24 +18,26 @@ async function loadItems() {
       // FIX: Use item.itemName (check your backend field names!)
       div.innerHTML = `
     <div class="item-info">
-        <span class="${item.bought ? "bought" : ""}" id="text-${item.id}" onClick = ${item.bought? "cross()" : ""} >
+        <span 
+            class="item-text ${item.bought ? "bought" : ""}" 
+            id="text-${item.id}" 
+            onclick="window.toggleBought('${item.id}')"
+        >
             ${item.item}
         </span>
-        <small>x${item.itemQty}</small>
+        <span class="item-qty">x${item.itemQty}</span>
     </div>
     <div class="actions">
         <button class="edit-btn" onclick="window.editItem('${item.id}', this)">Edit</button>
         <button class="del-btn" onclick="window.deleteItem('${item.id}')">Delete</button>
     </div>
 `;
-
       container.appendChild(div);
     });
   } catch (err) {
     console.error(err);
   }
 }
-
 
 window.editItem = async (id, buttonElement) => {
   // 1. YOU MUST DEFINE IT FIRST:
@@ -51,11 +53,10 @@ window.editItem = async (id, buttonElement) => {
 
   // 3. NOW you can use it:
   textSpan.innerHTML = `<input type="text" id="input-${id}" value="${originalTxt}">`;
-  
+
   buttonElement.innerText = "Save";
   buttonElement.onclick = () => window.saveData(id, buttonElement);
 };
-
 
 window.saveData = async (id, buttonElement) => {
   const inputField = document.getElementById(`input-${id}`);
@@ -79,6 +80,16 @@ window.saveData = async (id, buttonElement) => {
     }
   } catch (error) {
     console.error("Critical error in saveData:", error);
+  }
+};
+window.toggleBought = async (id) => {
+  try {
+    const res = await fetch(`/api/toggle/${id}`, { method: "PATCH" });
+    if (res.ok) {
+      await loadItems(); // This will re-render and apply the .bought class
+    }
+  } catch (error) {
+    console.error("Toggle failed", error);
   }
 };
 
@@ -127,6 +138,17 @@ window.deleteItem = async (id) => {
     console.error("Delete method failed");
   }
 };
+
+document.getElementById("searchInput").addEventListener("input", async (e) => {
+  const term = e.target.value.toLowerCase();
+
+  // Path A: Filter existing data in memory (Faster)
+  // Path B: Fetch from your new /api/search?name=... route
+  const res = await fetch(`/api/search?name=${term}`);
+  const filteredData = await res.json();
+
+  renderItems(filteredData); // Your function that clears and refills the listContainer
+});
 
 // Initial Run
 loadItems();

@@ -1,26 +1,202 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>MVC Grocery Tracker</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🛒 Smart Grocery Tracker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
     <style>
-        body { font-family: sans-serif; padding: 20px; max-width: 400px; margin: auto; }
-        .item-row { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #ddd; }
-        .bought { text-decoration: line-through; color: gray; }
-    </style>
-</head>
-<body>
-    <h2>🛒 Grocery List</h2>
-    
-    <form id="groceryForm">
-        <input type="text" id="itemName" placeholder="Item name..." required>
-        <input type="number" id="itemQty" placeholder="Qty" style="width: 50px;" required>
-        <button type="submit" id="submit">Add</button>
-    </form>
+      :root {
+        --primary: #4a90e2;
+        --danger: #ff5f5f;
+        --success: #2ecc71;
+        --bg: #f4f7f6;
+        --card: #ffffff;
+        --text: #333;
+      }
 
-    <div id="listContainer" style="margin-top: 20px;">
-        </div>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: var(--bg);
+        color: var(--text);
+        display: flex;
+        justify-content: center;
+        padding: 40px 20px;
+        margin: 0;
+      }
+
+      #app-container {
+        width: 100%;
+        max-width: 450px;
+        background: var(--card);
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+      }
+
+      h2 {
+        text-align: center;
+        margin-top: 0;
+        margin-bottom: 25px;
+        color: var(--primary);
+        font-weight: 800;
+        font-size: 1.8rem;
+      }
+
+      /* Search Bar Styling */
+      .search-container {
+        position: relative;
+        margin-bottom: 20px;
+      }
+
+      #searchInput {
+        width: 100%;
+        padding: 12px 15px 12px 40px;
+        border: 2px solid #eee;
+        border-radius: 12px;
+        outline: none;
+        font-family: inherit;
+        font-size: 0.95rem;
+        background-color: #fdfdfd;
+        transition: all 0.3s ease;
+      }
+
+      .search-container::before {
+        content: "🔍";
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 0.9rem;
+        opacity: 0.5;
+        pointer-events: none;
+      }
+
+      #searchInput:focus {
+        border-color: var(--primary);
+        background-color: #fff;
+        box-shadow: 0 4px 12px rgba(74, 144, 226, 0.1);
+      }
+
+      /* Form Styling */
+      #groceryForm {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 30px;
+      }
+
+      input[type="text"],
+      input[type="number"] {
+        padding: 12px;
+        border: 2px solid #eee;
+        border-radius: 10px;
+        outline: none;
+        transition: border-color 0.3s;
+      }
+
+      input[type="text"] { flex-grow: 1; }
+      input[type="number"] { width: 70px; }
+      input:focus { border-color: var(--primary); }
+
+      #submit {
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 0 20px;
+        border-radius: 10px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: opacity 0.2s;
+      }
+
+      #submit:hover { opacity: 0.9; }
+
+      /* List Styling */
+      .item-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px;
+        background: #fff;
+        border: 1px solid #f0f0f0;
+        border-radius: 12px;
+        margin-bottom: 12px;
+        transition: transform 0.2s;
+      }
+
+      .item-row:hover { transform: scale(1.01); }
+
+      .item-info {
+        display: flex;
+        flex-direction: column;
+        cursor: pointer;
+        flex-grow: 1;
+      }
+
+      .item-text { font-weight: 600; font-size: 1.05rem; }
+      .item-text.bought {
+        text-decoration: line-through;
+        color: #aaa;
+        font-style: italic;
+      }
+
+      .item-qty { font-size: 0.8rem; color: #888; margin-top: 2px; }
+
+      .actions { display: flex; gap: 8px; }
+      .actions button {
+        padding: 8px 12px;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        cursor: pointer;
+      }
+
+      .edit-btn { background: #e3f2fd; color: #1976d2; }
+      .del-btn { background: #ffebee; color: #d32f2f; }
+
+      /* Summary Dashboard */
+      #summary {
+        display: flex;
+        justify-content: space-around;
+        margin-top: 25px;
+        padding-top: 20px;
+        border-top: 2px solid #f4f7f6;
+      }
+
+      .stat-box { text-align: center; }
+      .stat-box span {
+        display: block;
+        font-size: 1.2rem;
+        font-weight: 800;
+        color: var(--primary);
+      }
+      .stat-box label { font-size: 0.7rem; text-transform: uppercase; color: #999; }
+    </style>
+  </head>
+  <body>
+    <div id="app-container">
+      <h2>🛒 Grocery Tracker</h2>
+
+      <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Search your list..." />
+      </div>
+
+      <form id="groceryForm">
+        <input type="text" id="itemName" placeholder="What to buy?" required />
+        <input type="number" id="itemQty" placeholder="Qty" value="1" required />
+        <button type="submit" id="submit">Add</button>
+      </form>
+
+      <div id="listContainer"></div>
+
+      <div id="summary"></div>
+    </div>
 
     <script src="script.js" type="module"></script>
-</body>
+  </body>
 </html>
