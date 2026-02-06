@@ -1,41 +1,49 @@
 const form = document.getElementById("groceryForm");
 const container = document.getElementById("listContainer");
 
+// --- 1. The Unified "Chef" (Handles the HTML for BOTH search and load) ---
+const renderItems = (data) => {
+  const container = document.getElementById("listContainer");
+  container.innerHTML = "";
+
+  if (data.length === 0) {
+    container.innerHTML = `<p class="no-results">No items found...</p>`;
+    return;
+  }
+
+  data.forEach((item) => {
+    const div = document.createElement("div");
+    div.className = "item-row";
+
+    // This is the "Full" HTML including your buttons and classes
+    div.innerHTML = `
+      <div class="item-info">
+          <span 
+              class="item-text ${item.bought ? "bought" : ""}" 
+              id="text-${item.id}" 
+              onclick="window.toggleBought('${item.id}')"
+          >
+              ${item.item}
+          </span>
+          <span class="item-qty">x${item.itemQty}</span>
+      </div>
+      <div class="actions">
+          <button class="edit-btn" onclick="window.editItem('${item.id}', this)">Edit</button>
+          <button class="del-btn" onclick="window.deleteItem('${item.id}')">Delete</button>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+};
 // --- 1. Load & Render ---
 async function loadItems() {
   try {
     const res = await fetch("/api/items");
     if (!res.ok) throw new Error("Failed to fetch items");
-
     const data = await res.json();
-    container.innerHTML = "";
-
-    data.forEach((item) => {
-      // FIX: Create a NEW div for every item, don't try to get a non-existent "div" id
-      const div = document.createElement("div");
-      div.className = "item-row"; // Add styling class
-
-      // FIX: Use item.itemName (check your backend field names!)
-      div.innerHTML = `
-    <div class="item-info">
-        <span 
-            class="item-text ${item.bought ? "bought" : ""}" 
-            id="text-${item.id}" 
-            onclick="window.toggleBought('${item.id}')"
-        >
-            ${item.item}
-        </span>
-        <span class="item-qty">x${item.itemQty}</span>
-    </div>
-    <div class="actions">
-        <button class="edit-btn" onclick="window.editItem('${item.id}', this)">Edit</button>
-        <button class="del-btn" onclick="window.deleteItem('${item.id}')">Delete</button>
-    </div>
-`;
-      container.appendChild(div);
-    });
+    renderItems(data); // Send data to the Chef
   } catch (err) {
-    console.error(err);
+    console.error("Load error:", err);
   }
 }
 
@@ -140,14 +148,15 @@ window.deleteItem = async (id) => {
 };
 
 document.getElementById("searchInput").addEventListener("input", async (e) => {
-  const term = e.target.value.toLowerCase();
-
-  // Path A: Filter existing data in memory (Faster)
-  // Path B: Fetch from your new /api/search?name=... route
-  const res = await fetch(`/api/search?name=${term}`);
-  const filteredData = await res.json();
-
-  renderItems(filteredData); // Your function that clears and refills the listContainer
+  const term = e.target.value;
+  try {
+    const res = await fetch(`/api/search?name=${encodeURIComponent(term)}`);
+    if (!res.ok) throw new Error("Search failed");
+    const data = await res.json();
+    renderItems(data); // Send filtered data to the SAME Chef
+  } catch (err) {
+    console.error("Search error:", err);
+  }
 });
 
 // Initial Run
