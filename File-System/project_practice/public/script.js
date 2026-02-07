@@ -48,22 +48,26 @@ async function loadItems() {
 }
 
 window.editItem = async (id, buttonElement) => {
-  // 1. YOU MUST DEFINE IT FIRST:
   const textSpan = document.getElementById(`text-${id}`);
-
-  // 2. Check if it actually exists (Senior safety check)
-  if (!textSpan) {
-    console.error("Could not find the span element!");
-    return;
-  }
+  if (!textSpan) return;
 
   const originalTxt = textSpan.innerText;
 
-  // 3. NOW you can use it:
-  textSpan.innerHTML = `<input type="text" id="input-${id}" value="${originalTxt}">`;
+  // FIX: Added onclick="event.stopPropagation()" to the input
+  textSpan.innerHTML = `
+    <input 
+      type="text" 
+      id="input-${id}" 
+      value="${originalTxt}" 
+      onclick="event.stopPropagation()" 
+    >
+  `;
 
   buttonElement.innerText = "Save";
-  buttonElement.onclick = () => window.saveData(id, buttonElement);
+  buttonElement.onclick = (e) => {
+    e.stopPropagation(); // Senior move: stop bubbling on the Save button too
+    window.saveData(id, buttonElement);
+  };
 };
 
 window.saveData = async (id, buttonElement) => {

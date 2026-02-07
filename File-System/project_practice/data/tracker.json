@@ -1,0 +1,23 @@
+[
+  {
+    "id": "39a3620b-fa77-48ff-9cf5-6c241c01ec6f",
+    "item": "Apple",
+    "itemQty": 1,
+    "createdAt": "2026-02-07T13:18:59.687Z",
+    "bought": false
+  },
+  {
+    "id": "43c64964-fc6e-46fa-bf61-592c584abe6b",
+    "item": "Milk ",
+    "itemQty": 2,
+    "createdAt": "2026-02-07T13:19:06.069Z",
+    "bought": false
+  },
+  {
+    "id": "bcab56fb-fbdf-43c8-9fb9-d98d1b716690",
+    "item": "Juice packet",
+    "itemQty": 2,
+    "createdAt": "2026-02-07T13:19:15.716Z",
+    "bought": false
+  }
+]
