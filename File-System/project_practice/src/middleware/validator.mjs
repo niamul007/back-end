@@ -1,12 +1,11 @@
+import { error } from "node:console";
+
 export const validate = (schema) => (req, res, next) => {
   const result = schema.safeParse({
     body: req.body,
     params: req.params,
     query: req.query,
   });
-
-
-
   // 1. If validation FAILS
   if (!result.success) {
     // We only touch result.error if success is false!
@@ -18,7 +17,6 @@ export const validate = (schema) => (req, res, next) => {
       })),
     });
   }
-
   // 2. If validation SUCCEEDS
   // Re-assign the cleaned data to req so your controller can use it
   req.body = result.data.body;
@@ -26,3 +24,4 @@ export const validate = (schema) => (req, res, next) => {
   
   next(); 
 };
+
