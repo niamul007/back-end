@@ -156,8 +156,12 @@ document.getElementById("searchInput").addEventListener("input", async (e) => {
   try {
     const res = await fetch(`/api/search?name=${encodeURIComponent(term)}`);
     if (!res.ok) throw new Error("Search failed");
-    const data = await res.json();
-    renderItems(data); // Send filtered data to the SAME Chef
+    
+    const responseBody = await res.json(); // Renamed 'data' to 'responseBody' for clarity
+    
+    // FIX: Pass the array inside 'data' to the render function
+    renderItems(responseBody.data); 
+    
   } catch (err) {
     console.error("Search error:", err);
   }
