@@ -1,12 +1,5 @@
 [
   {
-    "id": "39a3620b-fa77-48ff-9cf5-6c241c01ec6f",
-    "item": "Apple",
-    "itemQty": 1,
-    "createdAt": "2026-02-07T13:18:59.687Z",
-    "bought": false
-  },
-  {
     "id": "43c64964-fc6e-46fa-bf61-592c584abe6b",
     "item": "Milk ",
     "itemQty": 2,
@@ -18,6 +11,27 @@
     "item": "Juice packet",
     "itemQty": 2,
     "createdAt": "2026-02-07T13:19:15.716Z",
+    "bought": false
+  },
+  {
+    "id": "7037b734-7d42-413f-a9f3-94e07205f4ba",
+    "item": "Milk ",
+    "itemQty": 1,
+    "createdAt": "2026-02-09T12:25:05.570Z",
+    "bought": false
+  },
+  {
+    "id": "5363ffe7-980e-491e-858c-137937da30aa",
+    "item": "Aplle ",
+    "itemQty": 1,
+    "createdAt": "2026-02-09T13:14:28.958Z",
+    "bought": false
+  },
+  {
+    "id": "7a668b4d-931a-49da-b247-430664ddb011",
+    "item": "Mango",
+    "itemQty": 3,
+    "createdAt": "2026-02-09T13:14:48.141Z",
     "bought": false
   }
 ]
