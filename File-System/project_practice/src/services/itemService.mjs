@@ -1,4 +1,5 @@
 // src/services/itemService.mjs
+import { it } from "zod/locales";
 import { getAllItem, saveAllItem } from "../model/models.mjs";
 import crypto from "crypto";
 
@@ -79,4 +80,10 @@ export const searchItem = async (name) => {
   );
   
   return filtered; // FIX: You forgot to return the filtered list!
+};
+
+export const resetAll = async () => {
+  const updated = [];
+  await saveAllItem(updated);
+  return updated
 };
