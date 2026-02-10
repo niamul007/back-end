@@ -1,6 +1,8 @@
+import { getAllItem } from "../model/models.mjs";
 import * as itemService from "../services/itemService.mjs";
 import AppError from "../utils/appError.mjs";
 import catchAsync from "../utils/catchAsync.mjs";
+import { resetAll } from "../services/itemService.mjs";
 
 // 1. GET ALL
 export const getItem = catchAsync(async (req, res, next) => {
@@ -71,3 +73,11 @@ export const searchItems = catchAsync(async (req, res, next) => {
         data: filteredResults // This is the data.data your frontend needs!
     });
 });
+
+export const resetItems = catchAsync(async(req,res,next)=>{
+  const updatedData = await resetAll();
+  res.status(200).json({
+    status: "success",
+    data: updatedData
+  })
+})
