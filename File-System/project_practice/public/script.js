@@ -1,6 +1,7 @@
 const form = document.getElementById("groceryForm");
 const container = document.getElementById("listContainer");
 
+
 // --- 1. The Unified "Chef" (Handles the HTML for BOTH search and load) ---
 const renderItems = (data) => {
   const container = document.getElementById("listContainer");
@@ -166,6 +167,24 @@ document.getElementById("searchInput").addEventListener("input", async (e) => {
     console.error("Search error:", err);
   }
 });
+
+document.getElementById("resetBtn").addEventListener("click", async () => {
+  if (!confirm("Are you sure you want to delete everything?")) return;
+
+  try {
+    const res = await fetch('/api/search/reset', { method: 'DELETE' }); 
+    // Note: Make sure your route in server.mjs matches this URL!
+    
+    const responseBody = await res.json();
+    
+    // We send the empty array [] to the SAME render function
+    renderItems(responseBody.data); 
+    
+  } catch (err) {
+    console.error("Failed to clear list:", err);
+  }
+});
+
 
 // Initial Run
 loadItems();
