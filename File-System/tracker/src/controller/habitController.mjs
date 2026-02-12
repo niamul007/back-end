@@ -23,7 +23,7 @@ export const postData = catchAsync(async (req, res, next) => {
   });
 });
 
-export const removeItem = async (req, res, next) => {
+export const removeItem = catchAsync(async (req, res, next) => {
   const { id } = req.params;
   try {
     const delitem = await habitService.delHabit(id);
@@ -36,4 +36,13 @@ export const removeItem = async (req, res, next) => {
       return next(new AppError("Not found", 400));
     throw err;
   }
-};
+});
+
+export const toggleData = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+  const toggle = await habitService.toggleItem(id);
+  res.status(200).json({
+    status: "success",
+    data: toggle,
+  });
+});
