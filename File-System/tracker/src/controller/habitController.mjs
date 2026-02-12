@@ -46,3 +46,11 @@ export const toggleData = catchAsync(async (req, res, next) => {
     data: toggle,
   });
 });
+
+export const resetItem = catchAsync(async (req,res,next) =>{
+  const reset = await habitService.reset();
+  res.status(200).json({
+    status: "success",
+    data: reset,
+  })
+})
