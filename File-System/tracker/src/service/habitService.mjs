@@ -18,3 +18,15 @@ export const addHabit = async (task) => {
     await writeData(data); // Save the actual array ('data'), not the result of .push()
     return newData; // Return the new item so the Controller can show it
 };
+
+
+export const delHabit = async (id) =>{
+  const data = await readData();
+  const update = data.filter((item) => item.id !== id);
+
+  if(update.length === data.length){
+    throw new Error("Not found")
+  }
+  await writeData(update)
+  return update;
+}
