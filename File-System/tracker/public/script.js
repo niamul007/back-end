@@ -75,6 +75,7 @@ async function loadTask() {
 window.delTask = async (id) => {
     if(!confirm("Delete this habit?")) return;
     await fetch(`/api/delete-task/${id}`, { method: 'DELETE' });
+    console.log("clicked")
     await loadTask();
 };
 
