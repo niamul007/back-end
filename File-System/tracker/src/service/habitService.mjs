@@ -44,3 +44,10 @@ export const toggleItem = async (id) => {
   await writeData(updated);
   return updated;
 };
+
+
+export const reset = async()=>{
+  const updated = [];
+  await writeData(updated);
+  return updated;
+}
