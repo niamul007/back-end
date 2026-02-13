@@ -1,6 +1,6 @@
 import path from "node:path";
 import fs from "node:fs/promises";
-
+import { pool } from '../config/db.mjs';
 const __dirname = import.meta.dirname;
 // Good pathing! Ensuring it goes to the root data folder.
 const filePath = path.join(__dirname, "..", "..", "data", "habit.json");
@@ -34,12 +34,25 @@ export const writeData = async (data) => {
   }
 };
 
+// model/habitModel.mjs
+
 export const initStorage = async () => {
   try {
-    await fs.access(filePath);
-  } catch (error) {
-    // Ensure the 'data' directory exists too if you want to be extra safe!
-    await fs.writeFile(filePath, "[]");
-    console.log("System: Data file initialized successfully.");
+    const res = await pool.query('SELECT NOW()');
+    console.log("🚀 Neon Cloud is connected! Time:", res.rows[0].now);
+    
+    // This creates your table automatically
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS habits (
+        id SERIAL PRIMARY KEY,
+        task TEXT NOT NULL,
+        is_done BOOLEAN DEFAULT false,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+    return true;
+  } catch (err) {
+    console.error("❌ The Model could not reach Neon:", err.message);
+    throw err; 
   }
 };
