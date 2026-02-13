@@ -1,53 +1,40 @@
-import { readData, writeData } from "../model/habitModel.mjs";
-import crypto from "crypto";
+// 1. IMPORT the shared pool (no new Pool here!)
+import { pool } from '../config/db.mjs'; 
 
+// 2. SHOW ALL (Uses SQL instead of reading a JSON file)
 export const showAllHabit = async () => {
-  const data = await readData();
-  return data;
+  const res = await pool.query('SELECT * FROM habits ORDER BY created_at DESC');
+  return res.rows;
 };
 
+// 3. ADD HABIT (Postgres generates the ID automatically)
 export const addHabit = async (task) => {
-  const data = await readData();
-  const newData = {
-    id: crypto.randomUUID(),
-    task, // shorthand for task: task
-    isDone: false,
-  };
-
-  data.push(newData); // This modifies the 'data' array in place
-  await writeData(data); // Save the actual array ('data'), not the result of .push()
-  return newData; // Return the new item so the Controller can show it
+  const res = await pool.query(
+    'INSERT INTO habits (task) VALUES ($1) RETURNING *',
+    [task]
+  );
+  return res.rows[0]; 
 };
 
+// 4. DELETE HABIT
 export const delHabit = async (id) => {
-  const data = await readData();
-  const update = data.filter((item) => item.id !== id);
-
-  if (update.length === data.length) {
-    throw new Error("Not found");
-  }
-  await writeData(update);
-  return update;
+  const res = await pool.query('DELETE FROM habits WHERE id = $1 RETURNING *', [id]);
+  if (res.rowCount === 0) throw new Error("Not found");
+  return res.rows;
 };
 
+// 5. TOGGLE ITEM
 export const toggleItem = async (id) => {
-  const data = await readData();
-  if (!data.find((i) => i.id === id)) {
-    throw new Error("NOT_FOUND");
-  }
-  const updated = data.map((item) => {
-    if (item.id === id) {
-      return { ...item, isDone: !item.isDone };
-    }
-    return item;
-  });
-  await writeData(updated);
-  return updated;
+  const res = await pool.query(
+    'UPDATE habits SET is_done = NOT is_done WHERE id = $1 RETURNING *',
+    [id]
+  );
+  if (res.rowCount === 0) throw new Error("NOT_FOUND");
+  return res.rows[0];
 };
 
-
-export const reset = async()=>{
-  const updated = [];
-  await writeData(updated);
-  return updated;
-}
+// 6. RESET
+export const reset = async () => {
+  await pool.query('DELETE FROM habits');
+  return [];
+};
